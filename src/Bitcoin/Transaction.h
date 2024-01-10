@@ -1,4 +1,4 @@
-// Copyright © 2017-2021 Trust Wallet.
+// Copyright © 2017-2023 Trust Wallet.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -19,6 +19,7 @@
 #include "../proto/Bitcoin.pb.h"
 
 #include <vector>
+#include <optional>
 
 namespace TW::Bitcoin {
 
@@ -95,6 +96,8 @@ public:
                           uint64_t amount, enum SignatureVersion version) const;
 
     void serializeInput(size_t subindex, const Script&, size_t index, enum TWBitcoinSigHashType hashType, Data& data) const;
+
+    static std::optional<uint64_t> calculateFee(const Data& encoded, uint64_t satVb);
 
     /// Converts to Protobuf model
     Proto::Transaction proto() const;

@@ -1,4 +1,4 @@
-// Copyright © 2017-2022 Trust Wallet.
+// Copyright © 2017-2023 Trust Wallet.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -87,6 +87,18 @@ TEST(TWAnySingerOntology, OntTransfer) {
               "305a4cd3bb6ea2fe80fd293abb3c592e679c42c546cbf3baa051a07b28b374a6232103d9fd62df332403"
               "d9114f3fa3da0d5aec9dfa42948c2f50738d52470469a1a1eeac",
               hex(output.encoded()));
+
+    // TODO uncomment when nist256p1 Rust implementation is enabled.
+    // EXPECT_EQ("00d102d45c8bf401000000000000204e00000000000057e9d1a61f9aafa798b6c7fbeae35639681d7df6"
+    //           "7100c66b14fbacc8214765d457c8e3f2b5a1d3c4981a2e9d2a6a7cc814feec06b79ed299ea06fcb94aba"
+    //           "c41aaf3ead76586a7cc8516a7cc86c51c1087472616e7366657214000000000000000000000000000000"
+    //           "00000000010068164f6e746f6c6f67792e4e61746976652e496e766f6b6500024140301766d925382a6e"
+    //           "bb2ebeb18d3741954c9370dcf6d9c45b34ce7b18bc42dcdb8300d7215080efb87dd3f35de5f3b6d98aac"
+    //           "d6161fbc0845b82d0d8be4b8b6d52321031bec1250aa8f78275f99a6663688f31085848d0ed92f1203e4"
+    //           "47125f927b7486ac414038466b25ac49a22ba8c301328ef049a61711b257987e85e25d63e0444a14e860"
+    //           "305a4cd3bb6ea2fe80fd293abb3c592e679c42c546cbf3baa051a07b28b374a6232103d9fd62df332403"
+    //           "d9114f3fa3da0d5aec9dfa42948c2f50738d52470469a1a1eeac",
+    //           hex(output.encoded()));
 }
 
 TEST(TWAnySingerOntology, OngDecimals) {
@@ -157,6 +169,18 @@ TEST(TWAnySingerOntology, OngTransfer) {
               "3b078bd4e21bb4404c0182a32ee05260e22454dffb34dacccf458dfbee6d32db232103d9fd62df332403"
               "d9114f3fa3da0d5aec9dfa42948c2f50738d52470469a1a1eeac",
               hex(output.encoded()));
+
+    // TODO uncomment when nist256p1 Rust implementation is enabled.
+    // EXPECT_EQ("00d19d3182a8f401000000000000204e00000000000057e9d1a61f9aafa798b6c7fbeae35639681d7df6"
+    //           "7100c66b14fbacc8214765d457c8e3f2b5a1d3c4981a2e9d2a6a7cc814feec06b79ed299ea06fcb94aba"
+    //           "c41aaf3ead76586a7cc8516a7cc86c51c1087472616e7366657214000000000000000000000000000000"
+    //           "00000000020068164f6e746f6c6f67792e4e61746976652e496e766f6b6500024140e27e935b87855efa"
+    //           "d62bb76b21c7b591f445f867eff86f888ca6ee1870ecd80f8c4754e565b28a85b384612b93b007301438"
+    //           "00049b97e83c95844a8eb7d66adc2321031bec1250aa8f78275f99a6663688f31085848d0ed92f1203e4"
+    //           "47125f927b7486ac4140450047b2efb384129a16ec4c707790e9379b978cc7085170071d8d7c5c037d74"
+    //           "c4f8742a1de44bc0b3fe7d5cd11fad9edac2a5cdabe2c3b824743cc70df5f276232103d9fd62df332403"
+    //           "d9114f3fa3da0d5aec9dfa42948c2f50738d52470469a1a1eeac",
+    //           hex(output.encoded()));
 }
 
 TEST(TWAnySingerOntology, OngWithdraw) {
@@ -234,7 +258,76 @@ TEST(TWAnySingerOntology, Oep4Transfer) {
     Proto::SigningOutput output;
     ANY_SIGN(input, TWCoinTypeOntology);
 
+    auto rawTx = data(output.encoded());
+    auto rawTxHex = hex(rawTx);
+
     EXPECT_EQ("00d134120000c40900000000000050c3000000000000fbacc8214765d457c8e3f2b5a1d3c4981a2e9d2a4d02e9001496f688657b95be51c11a87b51adfda4ab69e9cbb1457e9d1a61f9aafa798b6c7fbeae35639681d7df653c1087472616e736665726733def739225d0f93dd2aed457d7b1fd074ec31ff00024140bd2923854d7b84b97a107bb3cddf18c8e3dddd2f36b41a1f5f5b23366484daa22871cfb819923fe01e9cb1e9ed16baa2b05c2feb76bcbe2ec125f72701c5e965232103d9fd62df332403d9114f3fa3da0d5aec9dfa42948c2f50738d52470469a1a1eeac41406d638653597774ce45812ea2653250806b657b32b7c6ad3e027ddeba91e9a9da4bb5dacd23dafba868cb31bacb38b4a6ff2607682a426c1dc09b05a1e158d6cd2321031bec1250aa8f78275f99a6663688f31085848d0ed92f1203e447125f927b7486ac", hex(output.encoded()));
+
+    // TODO uncomment when nist256p1 Rust implementation is enabled.
+    // EXPECT_EQ("00d134120000c40900000000000050c3000000000000fbacc8214765d457c8e3f2b5a1d3c4981a2e9d2a4d02e9001496f688657b95be51c11a87b51adfda4ab69e9cbb1457e9d1a61f9aafa798b6c7fbeae35639681d7df653c1087472616e736665726733def739225d0f93dd2aed457d7b1fd074ec31ff00024140bd2923854d7b84b97a107bb3cddf18c8e3dddd2f36b41a1f5f5b23366484daa2d78e3046e66dc020e1634e1612e9455d0c8acac2305ae0563293d39bfa9d3bec232103d9fd62df332403d9114f3fa3da0d5aec9dfa42948c2f50738d52470469a1a1eeac41406d638653597774ce45812ea2653250806b657b32b7c6ad3e027ddeba91e9a9dab44a2531dc2504589734ce4534c74b58bdc0f3457cd53267331ec5211b0a4e842321031bec1250aa8f78275f99a6663688f31085848d0ed92f1203e447125f927b7486ac", rawTxHex);
+}
+
+TEST(TWAnySingerOntology, Oep4TokenBalanceOf) {
+    // curl  -H "Content-Type: application/json"  -X POST -d '{"Action":"sendrawtransaction",
+    // "Version":"1.0.0","00d1a119d4f700000000000000000000000000000000000000000000000000000000000000000000000036144a03aaf03d12fd4d46bfcc260bda73ecef33b83b51c10962616c616e63654f6667e77fb36f54874c29f503d301d91d8ab98eb2342f0000"}'
+    // http://polaris2.ont.io:20334/api/v1/transaction?preExec=1
+    //
+    // {"Action":"sendrawtransaction","Desc":"SUCCESS","Error":0,"Result":{"State":1,"Gas":20000,"Result":"40922df506","Notify":[]},"Version":"1.0.0"}
+    auto input = Proto::SigningInput();
+    input.set_contract("2f34b28eb98a1dd901d303f5294c87546fb37fe7");
+    input.set_method("balanceOf");
+    input.set_query_address("ANXE3XovCwBH1ckQnPc6vKYiTwRXyrVToD");
+    input.set_nonce(4157872545);
+    auto data = Oep4TxBuilder::build(input);
+    auto rawTx = hex(data);
+    EXPECT_EQ("00d1a119d4f700000000000000000000000000000000000000000000000000000000000000000000000036144a03aaf03d12fd4d46bfcc260bda73ecef33b83b51c10962616c616e63654f6667e77fb36f54874c29f503d301d91d8ab98eb2342f0000",
+              rawTx);
+}
+
+TEST(TWAnySingerOntology, Oep4TokenDecimals) {
+    // curl  -H "Content-Type: application/json"  -X POST -d '{"Action":"sendrawtransaction",
+    // "Version":"1.0.0","Data":"00d1b1050fb40000000000000000000000000000000000000000000000000000000000000000000000002000c108646563696d616c7367e77fb36f54874c29f503d301d91d8ab98eb2342f0000"}'
+    // http://polaris2.ont.io:20334/api/v1/transaction?preExec=1
+    //
+    //{"Action":"sendrawtransaction","Desc":"SUCCESS","Error":0,"Result":{"State":1,"Gas":20000,"Result":"08","Notify":[]},"Version":"1.0.0"}
+    auto input = Proto::SigningInput();
+    input.set_contract("2f34b28eb98a1dd901d303f5294c87546fb37fe7");
+    input.set_method("decimals");
+    input.set_nonce(3020883377);
+    auto data = Oep4TxBuilder::build(input);
+    auto rawTx = hex(data);
+    EXPECT_EQ("00d1b1050fb40000000000000000000000000000000000000000000000000000000000000000000000002000c108646563696d616c7367e77fb36f54874c29f503d301d91d8ab98eb2342f0000",
+              rawTx);
+}
+
+TEST(TWAnySingerOntology, Oep4TokenTransfer) {
+    auto ownerPrivateKey =
+        parse_hex("4646464646464646464646464646464646464646464646464646464646464646");
+    auto payerPrivateKey =
+        parse_hex("4646464646464646464646464646464646464646464646464646464646464652");
+    auto input = Proto::SigningInput();
+    input.set_contract("2f34b28eb98a1dd901d303f5294c87546fb37fe7");
+    input.set_method("transfer");
+    input.set_nonce(2232822985);
+    input.set_owner_private_key(ownerPrivateKey.data(), ownerPrivateKey.size());
+    input.set_payer_private_key(payerPrivateKey.data(), payerPrivateKey.size());
+    input.set_to_address("ARR6PsaBwRttzCmyxCMhL7NmFk1LqExD7L");
+    input.set_amount(1000);
+    input.set_gas_price(2500);
+    input.set_gas_limit(200);
+
+    Proto::SigningOutput output;
+    ANY_SIGN(input, TWCoinTypeOntology);
+
+    EXPECT_EQ("00d1c92c1685c409000000000000c80000000000000057e9d1a61f9aafa798b6c7fbeae35639681d7df6"
+              "4d02e8031469c329fbb30a490979ea1a6f0b6a3a91235f6bd714fbacc8214765d457c8e3f2b5a1d3c498"
+              "1a2e9d2a53c1087472616e7366657267e77fb36f54874c29f503d301d91d8ab98eb2342f000241402b62"
+              "b4c6bc07667019e5c9a1fa1b83ca71ee23ddb763446406b1b03706bf50a6180b13e255a08ade7da376df"
+              "d34faee7f51c4f0056325fa79aaf7de0ef25d64e2321031bec1250aa8f78275f99a6663688f31085848d"
+              "0ed92f1203e447125f927b7486ac41408aa88ae92ea30a9e5059de8594f462af7dfa7545fffa6654e94e"
+              "edfb910bcd5452a26d1554d5d980db84d00dd330aab2fc68316660c8ae5af2c806085157e8ce232103d9"
+              "fd62df332403d9114f3fa3da0d5aec9dfa42948c2f50738d52470469a1a1eeac",
+              hex(output.encoded()));
 }
 
 } // namespace TW::Ontology::tests

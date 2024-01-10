@@ -3,6 +3,8 @@ syntax = "proto3";
 package TW.Cosmos.Proto;
 option java_package = "wallet.core.jni.proto";
 
+import "Common.proto";
+
 // A denomination and an amount
 message Amount {
     // name of the denomination
@@ -35,6 +37,19 @@ enum BroadcastMode {
     BLOCK = 0; // Wait for the tx to pass/fail CheckTx, DeliverTx, and be committed in a block
     SYNC = 1;  // Wait for the tx to pass/fail CheckTx
     ASYNC = 2; // Don't wait for pass/fail CheckTx; send and return tx immediately
+}
+
+message THORChainAsset {
+    string chain = 1;
+    string symbol = 2;
+    string ticker = 3;
+    bool synth = 4;
+}
+
+message THORChainCoin {
+    THORChainAsset asset = 1;
+    string amount = 2;
+    int64 decimals = 3;
 }
 
 // A transaction payload message
@@ -88,6 +103,13 @@ message Message {
         string type_prefix = 5;
     }
 
+     // cosmos-sdk/MsgSetWithdrawAddress
+     message SetWithdrawAddress {
+        string delegator_address = 1;
+        string withdraw_address = 2;
+        string type_prefix = 3;
+    }
+
     // cosmos-sdk/MsgWithdrawDelegationReward
     message WithdrawDelegationReward {
         string delegator_address = 1;
@@ -134,6 +156,13 @@ message Message {
         bytes from_address = 1;
         bytes to_address = 2;
         repeated Amount amounts = 3;
+    }
+
+    // thorchain/MsgDeposit
+    message THORChainDeposit {
+        repeated THORChainCoin coins = 1;
+        string memo = 2;
+        bytes signer = 3;
     }
 
     // execute within wasm/MsgExecuteContract, used by Terra Classic
@@ -187,6 +216,7 @@ message Message {
     }
 
     // execute within wasm/MsgExecuteContract
+    // TODO replaces `ExecuteContract`.
     message WasmExecuteContractGeneric {
         // sender address
         string sender_address = 1;
@@ -291,6 +321,19 @@ message Message {
         VoteOption option      = 3;
     }
 
+    message MsgStrideLiquidStakingStake {
+        string creator = 1;
+        string amount = 2;
+        string host_denom = 3;
+    }
+
+    message MsgStrideLiquidStakingRedeem {
+        string creator = 1;
+        string amount = 2;
+        string host_zone = 3;
+        string receiver = 4;
+    }
+
     // The payload message
     oneof message_oneof {
         Send send_coins_message = 1;
@@ -303,14 +346,18 @@ message Message {
         WasmTerraExecuteContractTransfer wasm_terra_execute_contract_transfer_message = 8;
         WasmTerraExecuteContractSend wasm_terra_execute_contract_send_message = 9;
         THORChainSend thorchain_send_message = 10;
-        WasmTerraExecuteContractGeneric wasm_terra_execute_contract_generic = 11;
-        WasmExecuteContractTransfer wasm_execute_contract_transfer_message = 12;
-        WasmExecuteContractSend wasm_execute_contract_send_message = 13;
-        WasmExecuteContractGeneric wasm_execute_contract_generic = 14;
-        SignDirect sign_direct_message = 15;
-        AuthGrant  auth_grant = 16;
-        AuthRevoke auth_revoke = 17;
-        MsgVote msg_vote = 18;
+        WasmTerraExecuteContractGeneric wasm_terra_execute_contract_generic = 12;
+        WasmExecuteContractTransfer wasm_execute_contract_transfer_message = 13;
+        WasmExecuteContractSend wasm_execute_contract_send_message = 14;
+        WasmExecuteContractGeneric wasm_execute_contract_generic = 15;
+        SignDirect sign_direct_message = 16;
+        AuthGrant  auth_grant = 17;
+        AuthRevoke auth_revoke = 18;
+        SetWithdrawAddress set_withdraw_address_message = 19;
+        MsgVote msg_vote = 20;
+        MsgStrideLiquidStakingStake msg_stride_liquid_staking_stake = 21;
+        MsgStrideLiquidStakingRedeem msg_stride_liquid_staking_redeem = 22;
+        THORChainDeposit thorchain_deposit_message = 23;
     }
 }
 
@@ -348,6 +395,8 @@ message SigningInput {
 
     // Broadcast mode (included in output, relevant when broadcasting)
     BroadcastMode mode = 9;
+
+    bytes public_key = 10;
 }
 
 // Result containing the signed and encoded transaction.
@@ -362,9 +411,11 @@ message SigningOutput {
     // wrapped in a ready-to-broadcast json.
     string serialized = 3;
 
-    // Set in case of error
-    string error = 4;
-
     // signatures array json string
-    string signature_json = 5;
+    string signature_json = 4;
+
+    // error description
+    string error_message = 5;
+
+    Common.Proto.SigningError error = 6;
 }

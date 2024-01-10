@@ -1,4 +1,4 @@
-// Copyright © 2017-2022 Trust Wallet.
+// Copyright © 2017-2023 Trust Wallet.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -7,6 +7,7 @@
 #include "PublicKey.h"
 #include "PrivateKey.h"
 #include "Data.h"
+#include "rust/bindgen/WalletCoreRSBindgen.h"
 
 #include <TrezorCrypto/ecdsa.h>
 #include <TrezorCrypto/ed25519-donna/ed25519-blake2b.h>
@@ -15,6 +16,7 @@
 #include <TrezorCrypto/secp256k1.h>
 #include <TrezorCrypto/sodium/keypair.h>
 #include <TrezorCrypto/zilliqa.h>
+#include <ImmutableX/StarkKey.h>
 
 #include <iterator>
 
@@ -41,6 +43,8 @@ bool PublicKey::isValid(const Data& data, enum TWPublicKeyType type) {
     case TWPublicKeyTypeSECP256k1Extended:
     case TWPublicKeyTypeNIST256p1Extended:
         return size == secp256k1ExtendedSize && data[0] == 0x04;
+    case TWPublicKeyTypeStarkex:
+        return size == starkexSize;
     default:
         return false;
     }
@@ -55,6 +59,7 @@ PublicKey::PublicKey(const Data& data, enum TWPublicKeyType type)
         throw std::invalid_argument("Invalid public key data");
     }
     switch (type) {
+    case TWPublicKeyTypeStarkex:
     case TWPublicKeyTypeSECP256k1:
     case TWPublicKeyTypeNIST256p1:
     case TWPublicKeyTypeSECP256k1Extended:
@@ -128,6 +133,16 @@ PublicKey PublicKey::extended() const {
     }
 }
 
+bool rust_public_key_verify(const Data& key, TWPublicKeyType type, const Data& sig, const Data& msgHash) {
+    auto* pubkey = Rust::tw_public_key_create_with_data(key.data(), key.size(), static_cast<uint32_t>(type));
+    if (pubkey == nullptr) {
+        return {};
+    }
+    bool verified = Rust::tw_public_key_verify(pubkey, sig.data(), sig.size(), msgHash.data(), msgHash.size());
+    Rust::tw_public_key_delete(pubkey);
+    return verified;
+}
+
 bool PublicKey::verify(const Data& signature, const Data& message) const {
     switch (type) {
     case TWPublicKeyTypeSECP256k1:
@@ -158,6 +173,8 @@ bool PublicKey::verify(const Data& signature, const Data& message) const {
         verifyBuffer[63] &= 127;
         return ed25519_sign_open(message.data(), message.size(), ed25519PublicKey.data(), verifyBuffer.data()) == 0;
     }
+    case TWPublicKeyTypeStarkex:
+        return rust_public_key_verify(bytes, type, signature, message);
     default:
         throw std::logic_error("Not yet implemented");
     }

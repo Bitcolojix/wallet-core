@@ -1,4 +1,4 @@
-// Copyright © 2017-2022 Trust Wallet.
+// Copyright © 2017-2023 Trust Wallet.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -19,11 +19,12 @@
 #include "Aptos/Entry.h"
 #include "Binance/Entry.h"
 #include "Bitcoin/Entry.h"
+#include "BitcoinDiamond/Entry.h"
 #include "Cardano/Entry.h"
 #include "Cosmos/Entry.h"
 #include "Decred/Entry.h"
 #include "EOS/Entry.h"
-#include "Elrond/Entry.h"
+#include "MultiversX/Entry.h"
 #include "Ethereum/Entry.h"
 #include "Everscale/Entry.h"
 #include "FIO/Entry.h"
@@ -31,6 +32,7 @@
 #include "Groestlcoin/Entry.h"
 #include "Harmony/Entry.h"
 #include "Icon/Entry.h"
+#include "IOST/Entry.h"
 #include "IoTeX/Entry.h"
 #include "Kusama/Entry.h"
 #include "NEAR/Entry.h"
@@ -43,6 +45,7 @@
 #include "Oasis/Entry.h"
 #include "Ontology/Entry.h"
 #include "Polkadot/Entry.h"
+#include "XRP/Entry.h"
 #include "Ronin/Entry.h"
 #include "Solana/Entry.h"
 #include "Stellar/Entry.h"
@@ -51,11 +54,20 @@
 #include "Theta/Entry.h"
 #include "Tron/Entry.h"
 #include "VeChain/Entry.h"
+#include "Verge/Entry.h"
 #include "Waves/Entry.h"
 #include "XRP/Entry.h"
 #include "Zcash/Entry.h"
 #include "Zilliqa/Entry.h"
+#include "Zen/Entry.h"
+#include "Everscale/Entry.h"
 #include "Hedera/Entry.h"
+#include "TheOpenNetwork/Entry.h"
+#include "Sui/Entry.h"
+#include "Greenfield/Entry.h"
+#include "InternetComputer/Entry.h"
+#include "NativeEvmos/Entry.h"
+#include "NativeInjective/Entry.h"
 // end_of_coin_includes_marker_do_not_modify
 
 using namespace TW;
@@ -70,7 +82,7 @@ Binance::Entry binanceDP;
 Bitcoin::Entry bitcoinDP;
 Cardano::Entry cardanoDP;
 Cosmos::Entry cosmosDP;
-Elrond::Entry elrondDP;
+MultiversX::Entry multiversxDP;
 EOS::Entry eosDP;
 Ethereum::Entry ethereumDP;
 Decred::Entry decredDP;
@@ -79,6 +91,7 @@ FIO::Entry fioDP;
 Groestlcoin::Entry groestlcoinDP;
 Harmony::Entry harmonyDP;
 Icon::Entry iconDP;
+IOST::Entry iostDP;
 IoTeX::Entry iotexDP;
 Kusama::Entry kusamaDP;
 Nano::Entry nanoDP;
@@ -99,12 +112,21 @@ Theta::Entry thetaDP;
 THORChain::Entry thorchainDP;
 Tron::Entry tronDP;
 VeChain::Entry vechainDP;
+Verge::Entry vergeDP;
 Waves::Entry wavesDP;
 Zcash::Entry zcashDP;
 Zilliqa::Entry zilliqaDP;
+BitcoinDiamond::Entry bcdDP;
+Zen::Entry zenDP;
 Nervos::Entry NervosDP;
 Everscale::Entry EverscaleDP;
 Hedera::Entry HederaDP;
+TheOpenNetwork::Entry tonDP;
+Sui::Entry SuiDP;
+Greenfield::Entry GreenfieldDP;
+InternetComputer::Entry InternetComputerDP;
+NativeEvmos::Entry NativeEvmosDP;
+NativeInjective::Entry NativeInjectiveDP;
 // end_of_coin_dipatcher_declarations_marker_do_not_modify
 
 CoinEntry* coinDispatcher(TWCoinType coinType) {
@@ -114,6 +136,7 @@ CoinEntry* coinDispatcher(TWCoinType coinType) {
     switch (blockchain) {
         // #coin-list#
         case TWBlockchainBitcoin: entry = &bitcoinDP; break;
+        case TWBlockchainBitcoinDiamond: entry = &bcdDP; break;
         case TWBlockchainEthereum: entry = &ethereumDP; break;
         case TWBlockchainVechain: entry = &vechainDP; break;
         case TWBlockchainTron: entry = &tronDP; break;
@@ -144,11 +167,14 @@ CoinEntry* coinDispatcher(TWCoinType coinType) {
         case TWBlockchainCardano: entry = &cardanoDP; break;
         case TWBlockchainNEO: entry = &neoDP; break;
         case TWBlockchainFilecoin: entry = &filecoinDP; break;
-        case TWBlockchainElrondNetwork: entry = &elrondDP; break;
+        case TWBlockchainMultiversX: entry = &multiversxDP; break;
         case TWBlockchainOasisNetwork: entry = &oasisDP; break;
         case TWBlockchainDecred: entry = &decredDP; break;
         case TWBlockchainGroestlcoin: entry = &groestlcoinDP; break;
         case TWBlockchainZcash: entry = &zcashDP; break;
+        case TWBlockchainZen: entry = &zenDP; break;
+        case TWBlockchainVerge: entry = &vergeDP; break;
+        case TWBlockchainIOST: entry = &iostDP; break;
         case TWBlockchainThorchain: entry = &thorchainDP; break;
         case TWBlockchainRonin: entry = &roninDP; break;
         case TWBlockchainKusama: entry = &kusamaDP; break;
@@ -156,6 +182,12 @@ CoinEntry* coinDispatcher(TWCoinType coinType) {
         case TWBlockchainEverscale: entry = &EverscaleDP; break;
         case TWBlockchainAptos: entry = &AptosDP; break;
         case TWBlockchainHedera: entry = &HederaDP; break;
+        case TWBlockchainTheOpenNetwork: entry = &tonDP; break;
+        case TWBlockchainSui: entry = &SuiDP; break;
+        case TWBlockchainGreenfield: entry = &GreenfieldDP; break;
+        case TWBlockchainInternetComputer: entry = &InternetComputerDP; break;
+        case TWBlockchainNativeEvmos: entry = &NativeEvmosDP; break;
+        case TWBlockchainNativeInjective: entry = &NativeInjectiveDP; break;
         // end_of_coin_dipatcher_switch_marker_do_not_modify
 
         default: entry = nullptr; break;
@@ -214,7 +246,7 @@ namespace TW::internal {
         assert(dispatcher != nullptr);
         return dispatcher->normalizeAddress(coin, address);
     }
-}
+} // namespace TW::internal
 
 std::string TW::normalizeAddress(TWCoinType coin, const string& address) {;
     if (!TW::validateAddress(coin, address)) {
@@ -289,12 +321,6 @@ void TW::anyCoinCompileWithSignatures(TWCoinType coinType, const Data& txInputDa
     auto* dispatcher = coinDispatcher(coinType);
     assert(dispatcher != nullptr);
     dispatcher->compile(coinType, txInputData, signatures, publicKeys, txOutputOut);
-}
-
-Data TW::anyCoinBuildTransactionInput(TWCoinType coinType, const std::string& from, const std::string& to, const uint256_t& amount, const std::string& asset, const std::string& memo, const std::string& chainId) {
-    auto* dispatcher = coinDispatcher(coinType);
-    assert(dispatcher != nullptr);
-    return dispatcher->buildTransactionInput(coinType, from, to, amount, asset, memo, chainId);
 }
 
 // Coin info accessors

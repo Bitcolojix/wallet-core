@@ -1,4 +1,4 @@
-// Copyright © 2017-2022 Trust Wallet.
+// Copyright © 2017-2023 Trust Wallet.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -28,7 +28,7 @@ TEST(TWAptosAddress, HDWallet) {
     auto address = WRAP(TWAnyAddress, TWAnyAddressCreateWithPublicKey(publicKey.get(), TWCoinTypeAptos));
     auto addressStr = WRAPS(TWAnyAddressDescription(address.get()));
 
-    assertStringsEqual(addressStr, "0x07968dab936c1bad187c60ce4082f307d030d780e91e694ae03aef16aba73f30");
+    assertStringsEqual(addressStr, "0x7968dab936c1bad187c60ce4082f307d030d780e91e694ae03aef16aba73f30");
 }
 
 } // namespace TW::Aptos::tests

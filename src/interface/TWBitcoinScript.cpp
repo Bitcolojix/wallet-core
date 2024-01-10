@@ -1,13 +1,13 @@
-// Copyright © 2017-2021 Trust Wallet.
+// Copyright © 2017-2023 Trust Wallet.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
 // file LICENSE at the root of the source code distribution tree.
 
 #include <TrustWalletCore/TWBitcoinScript.h>
-
 #include "../Bitcoin/Script.h"
 #include "../Bitcoin/SigHashType.h"
+#include "Data.h"
 
 #include <iterator>
 
@@ -154,6 +154,31 @@ struct TWBitcoinScript *_Nonnull TWBitcoinScriptLockScriptForAddress(TWString *_
     return new TWBitcoinScript{ .impl = script };
 }
 
+struct TWBitcoinScript *_Nonnull TWBitcoinScriptLockScriptForAddressReplay(TWString *_Nonnull address, enum TWCoinType coin, TWData *blockHash, int64_t blockHeight) {
+    auto* s = reinterpret_cast<const std::string*>(address);
+    auto* v = reinterpret_cast<const std::vector<uint8_t>*>(blockHash);
+    auto script = TW::Bitcoin::Script::lockScriptForAddress(*s, coin, *v, blockHeight);
+    return new TWBitcoinScript{ .impl = script };
+}
+
 uint32_t TWBitcoinScriptHashTypeForCoin(enum TWCoinType coinType) {
     return TW::Bitcoin::hashTypeForCoin(coinType);
+}
+
+TWData *_Nullable TWBitcoinScriptBuildBRC20InscribeTransfer(TWString* ticker, TWString* amount, TWData* pubkey) {
+    auto* brcTicker = reinterpret_cast<const std::string*>(ticker);
+    auto* brcAmount = reinterpret_cast<const std::string*>(amount);
+    auto* brcPubkey = reinterpret_cast<const TW::Data*>(pubkey);
+    auto script = TW::Bitcoin::Script::buildBRC20InscribeTransfer(*brcTicker, std::stoull(*brcAmount), *brcPubkey);
+    auto serialized = TW::data(script.SerializeAsString());
+    return TWDataCreateWithBytes(serialized.data(), serialized.size());
+}
+
+TWData *_Nullable TWBitcoinScriptBuildOrdinalNftInscription(TWString* mimeType, TWData* payload, TWData* pubkey) {
+    auto* ordMimeType = reinterpret_cast<const std::string*>(mimeType);
+    auto* ordPayload = reinterpret_cast<const TW::Data*>(payload);
+    auto* ordPubkey = reinterpret_cast<const TW::Data*>(pubkey);
+    auto script = TW::Bitcoin::Script::buildOrdinalNftInscription(*ordMimeType, *ordPayload, *ordPubkey);
+    auto serialized = TW::data(script.SerializeAsString());
+    return TWDataCreateWithBytes(serialized.data(), serialized.size());
 }

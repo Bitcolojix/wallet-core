@@ -1,4 +1,4 @@
-// Copyright © 2017-2020 Trust Wallet.
+// Copyright © 2017-2023 Trust Wallet.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -23,9 +23,9 @@ public:
 private:
     static const uint8_t checkSumSize = 4;
 
-    static Data buildRlpTxRaw(Data& txRaw, Data& sigRaw);
+    static Data buildRlpTxRaw(const Data& txRaw, const Data& sigRaw);
 
-    static Data buildMessageToSign(Data& txRaw);
+    static Data buildMessageToSign(const Data& txRaw);
 
     static Proto::SigningOutput createProtoOutput(std::string& signature, const std::string& signedTx);
 

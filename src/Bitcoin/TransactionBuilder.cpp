@@ -1,4 +1,4 @@
-// Copyright © 2017-2020 Trust Wallet.
+// Copyright © 2017-2023 Trust Wallet.
 //
 // This file is part of Trust. The full Trust copyright notice, including
 // terms governing use, modification, and redistribution, is contained in the
@@ -79,7 +79,7 @@ int64_t estimateSegwitFee(const FeeCalculator& feeCalculator, const TransactionP
 
 int extraOutputCount(const SigningInput& input) {
     int count = int(input.outputOpReturn.size() > 0);
-    return count;
+    return count + int(input.extraOutputs.size());
 }
 
 TransactionPlan TransactionBuilder::plan(const SigningInput& input) {
@@ -89,12 +89,14 @@ TransactionPlan TransactionBuilder::plan(const SigningInput& input) {
     }
 
     bool maxAmount = input.useMaxAmount;
-    if (input.amount == 0 && !maxAmount) {
+    Amount totalAmount = input.amount + input.extraOutputsAmount;
+
+    if (totalAmount == 0 && !maxAmount) {
         plan.error = Common::Proto::Error_zero_amount_requested;
     } else if (input.utxos.empty()) {
         plan.error = Common::Proto::Error_missing_input_utxos;
     } else {
-        const auto& feeCalculator = getFeeCalculator(static_cast<TWCoinType>(input.coinType));
+        const auto& feeCalculator = getFeeCalculator(static_cast<TWCoinType>(input.coinType), input.disableDustFilter);
         auto inputSelector = InputSelector<UTXO>(input.utxos, feeCalculator);
         auto inputSum = InputSelector<UTXO>::sum(input.utxos);
 
@@ -103,7 +105,7 @@ TransactionPlan TransactionBuilder::plan(const SigningInput& input) {
 
         // if amount requested is the same or more than available amount, it cannot be satisfied, but
         // treat this case as MaxAmount, and send maximum available (which will be less)
-        if (!maxAmount && static_cast<uint64_t>(input.amount) >= inputSum) {
+        if (!maxAmount && static_cast<uint64_t>(totalAmount) >= inputSum) {
             maxAmount = true;
         }
 
@@ -112,10 +114,14 @@ TransactionPlan TransactionBuilder::plan(const SigningInput& input) {
         UTXOs selectedInputs;
         if (!maxAmount) {
             output_size = 2 + extraOutputs; // output + change
-            if (input.utxos.size() <= SimpleModeLimit && input.utxos.size() <= MaxUtxosHardLimit) {
-                selectedInputs = inputSelector.select(plan.amount, input.byteFee, output_size);
+            if (input.useMaxUtxo) {
+                selectedInputs = inputSelector.selectMaxAmount(input.byteFee);
+            } else if (input.utxos.size() <= SimpleModeLimit &&
+                input.utxos.size() <= MaxUtxosHardLimit) {
+                selectedInputs = inputSelector.select(totalAmount, input.byteFee, output_size);
             } else {
-                selectedInputs = inputSelector.selectSimple(plan.amount, input.byteFee, output_size);
+                selectedInputs =
+                    inputSelector.selectSimple(totalAmount, input.byteFee, output_size);
             }
         } else {
             output_size = 1 + extraOutputs; // output, no change
@@ -131,19 +137,23 @@ TransactionPlan TransactionBuilder::plan(const SigningInput& input) {
             }
         }
 
-        if (plan.utxos.size() == 0) {
+        if (plan.utxos.empty()) {
             plan.amount = 0;
             plan.error = Common::Proto::Error_not_enough_utxos;
+        } else if (maxAmount && !input.extraOutputs.empty()) {
+            // As of now, we don't support `max` amount **and** extra outputs.
+            plan.amount = 0;
+            plan.error = Common::Proto::Error_invalid_params;
         } else {
             plan.availableAmount = InputSelector<UTXO>::sum(plan.utxos);
 
             // Compute fee.
             // must preliminary set change so that there is a second output
             if (!maxAmount) {
-                assert(input.amount <= plan.availableAmount);
+                assert(totalAmount <= plan.availableAmount);
                 plan.amount = input.amount;
                 plan.fee = 0;
-                plan.change = plan.availableAmount - plan.amount;
+                plan.change = plan.availableAmount - totalAmount;
             } else {
                 plan.amount = plan.availableAmount;
                 plan.fee = 0;
@@ -164,14 +174,25 @@ TransactionPlan TransactionBuilder::plan(const SigningInput& input) {
             }
             assert(plan.amount >= 0 && plan.amount <= plan.availableAmount);
 
-            // compute change
-            plan.change = plan.availableAmount - plan.amount - plan.fee;
+            // The total amount that will be spent.
+            Amount totalSpendAmount = plan.amount + input.extraOutputsAmount + plan.fee;
+
+            // Make sure that we have enough available UTXOs to spend `fee`, `amount` and `extraOutputsAmount`.
+            if (plan.availableAmount < totalSpendAmount) {
+                plan.amount = 0;
+                plan.error = Common::Proto::Error_not_enough_utxos;
+            } else {
+                // compute change
+                plan.change = plan.availableAmount - totalSpendAmount;
+            }
         }
     }
     assert(plan.change >= 0 && plan.change <= plan.availableAmount);
     assert(!maxAmount || plan.change == 0); // change is 0 in max amount case
 
-    assert(plan.amount + plan.change + plan.fee == plan.availableAmount);
+    assert(plan.error != Common::Proto::OK
+           // `plan.error` is OK, check if the values are expected.
+           || plan.amount + input.extraOutputsAmount + plan.change + plan.fee == plan.availableAmount);
 
     return plan;
 }

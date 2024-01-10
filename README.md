@@ -1,6 +1,6 @@
 <img src="docs/banner.png" align="center" title="Trust logo">
 
-Trust Wallet Core is an open source, cross-platform, mobile-focused library
+Trust Wallet Core is an open-source, cross-platform, mobile-focused library
 implementing low-level cryptographic wallet functionality for a high number of blockchains.
 It is a core part of the popular [Trust Wallet](https://trustwallet.com), and some other projects.
 Most of the code is C++ with a set of strict C interfaces, and idiomatic interfaces for supported languages:
@@ -10,7 +10,9 @@ Swift for iOS and Java (Kotlin) for Android.
 ![Android CI](https://github.com/trustwallet/wallet-core/workflows/Android%20CI/badge.svg)
 ![Linux CI](https://github.com/trustwallet/wallet-core/workflows/Linux%20CI/badge.svg)
 ![Wasm CI](https://github.com/trustwallet/wallet-core/workflows/Wasm%20CI/badge.svg)
+![Kotlin CI](https://github.com/trustwallet/wallet-core/workflows/Kotlin%20CI/badge.svg)
 ![Docker CI](https://github.com/trustwallet/wallet-core/workflows/Docker%20CI/badge.svg)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TrustWallet_wallet-core&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=TrustWallet_wallet-core)
 
 [![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/trustwallet/wallet-core)
 ![GitHub](https://img.shields.io/github/license/TrustWallet/wallet-core.svg)
@@ -22,9 +24,13 @@ Swift for iOS and Java (Kotlin) for Android.
 
 For comprehensive documentation, see [developer.trustwallet.com](https://developer.trustwallet.com/wallet-core).
 
+# Audit Reports
+
+Security Audit reports can be found in the [audit](audit) directory.
+
 # Supported Blockchains
 
-Wallet Core supports more than **60** blockchains: Bitcoin, Ethereum, BNB, Cosmos, Solana, and most major blockchain platforms.
+Wallet Core supports more than **130** blockchains: Bitcoin, Ethereum, BNB, Cosmos, Solana, and most major blockchain platforms.
 The full list is [here](docs/registry.md).
 
 # Building
@@ -38,7 +44,7 @@ If you want to use wallet core in your project follow these instructions.
 
 ## Android
 
-Android releases are hosted on [GitHub packages](https://github.com/trustwallet/wallet-core/packages/700258), you need to add GitHub access token to install it. Please checkout [this installation guide](https://developer.trustwallet.com/wallet-core/integration-guide/android-guide#adding-library-dependency) or `build.gradle` from our [android sample](https://github.com/trustwallet/wallet-core/blob/master/samples/android/build.gradle)
+Android releases are hosted on [GitHub packages](https://github.com/trustwallet/wallet-core/packages/700258), you need to add GitHub access token to install it. Please check out [this installation guide](https://developer.trustwallet.com/wallet-core/integration-guide/android-guide#adding-library-dependency) or `build.gradle` from our [android sample](https://github.com/trustwallet/wallet-core/blob/master/samples/android/build.gradle)
 
 Don't forget replacing the version in the code with latest: ![GitHub release (latest by date)](https://img.shields.io/github/v/release/trustwallet/wallet-core)
 
@@ -62,7 +68,7 @@ Or add remote url + `master` branch, it points to recent (not always latest) bin
 .package(name: "WalletCore", url: "https://github.com/trustwallet/wallet-core", .branchItem("master")),
 ```
 
-Then add libraries to target's `dependencies`: 
+Then add libraries to target's `dependencies`:
 
 ```swift
 .product(name: "WalletCore", package: "WalletCore"),
@@ -87,6 +93,9 @@ npm install @trustwallet/wallet-core
 
 Please check out the [Go integration sample](https://github.com/trustwallet/wallet-core/tree/master/samples/go).
 
+## Kotlin Multipleplatform (beta)
+
+Please check out the [Kotlin Multiplatform sample](https://github.com/trustwallet/wallet-core/tree/master/samples/kmp)
 
 # Projects
 
@@ -95,12 +104,13 @@ Projects using Trust Wallet Core. Add yours too!
 [<img src="https://trustwallet.com/assets/images/trust_logotype.svg" alt="Trust Wallet"/>](https://trustwallet.com)
 
 [Coinpaprika](https://coinpaprika.com/)
-| [IFWallet](https://www.ifwallet.com/)
 | [crypto.com](https://crypto.com)
 | [Alice](https://www.alicedapp.com/)
 | [Frontier](https://frontier.xyz/)
 | [Tokenary](https://tokenary.io/)
 | [MemesWallet](https://planetmemes.com/)
+| [xPortal](https://xportal.com/)
+| [Slingshot](https://slingshot.finance/)
 
 # Community
 
@@ -119,6 +129,12 @@ If you want to add support for a new blockchain also see [Adding Support for a N
 Thanks to all the people who contribute.
 <a href="https://github.com/trustwallet/wallet-core/graphs/contributors"><img src="https://opencollective.com/wallet-core/contributors.svg?width=890&button=false" /></a>
 
+# Disclaimer
+
+The Wallet Core project is led and managed by Trust Wallet with a large contributor community and actively used in several projects.  Our goal at Wallet Core is to give other wallets an easy way to add chain support.
+
+Trust Wallet products leverage wallet core, however, they may or may not leverage all the capabilities, features, and assets available in wallet core due to their own product requirements.
+
 # License
 
-Trust Wallet Core is available under the MIT license. See the [LICENSE](LICENSE) file for more info.
+Trust Wallet Core is available under the Apache 2.0 license. See the [LICENSE](LICENSE) file for more info.
